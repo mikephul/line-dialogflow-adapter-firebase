@@ -1,13 +1,13 @@
 # Line-Dialogflow Adapter for Firebase Functions 
 
-Line-Dialogflow Adapter helps pass various events from [Line Bot](https://developers.line.me/en/docs/messaging-api/overview/)  to [Dialogflow](https://dialogflow.com/). Normally, the events such as [Follow event](https://developers.line.me/en/docs/messaging-api/reference/#follow-event) and [Postback event](https://developers.line.me/en/docs/messaging-api/reference/#postback-event) are not yet supported out-of-the-box by Dialogflow. Hence, the bot can exclusively send text query to get the response from Dialogflow. This code seeks to translate [Line webhook events](https://developers.line.me/en/docs/messaging-api/reference/#webhook-event-objects) to Dialogflow custom events.
+Line-Dialogflow Adapter helps pass events from [Line Messaging API](https://developers.line.me/en/docs/messaging-api/overview/) to [Dialogflow](https://dialogflow.com/). Normally, the events such as [Follow event](https://developers.line.me/en/docs/messaging-api/reference/#follow-event) and [Postback event](https://developers.line.me/en/docs/messaging-api/reference/#postback-event) are not supported out-of-the-box by Dialogflow yet. Hence, the bot can only send text query to get the response from Dialogflow. This code seeks to translate [Line webhook events](https://developers.line.me/en/docs/messaging-api/reference/#webhook-event-objects) to Dialogflow custom events. Click [here](http://qr-official.line.me/L/oVd9bvJ4qG.png) to see the bot in action.
 
 __*Note:__ This code will deploy the adapter on [Firebase Cloud Functions](https://firebase.google.com/docs/functions/)
 
 
 ## Quickstart
 
-1. Create a bot in [Dialogflow](https://dialogflow.com/). Remember your `project-id` and `language`. No need to set up Integrations for Line.
+1. Create a bot in [Dialogflow](https://dialogflow.com/). Remember your `project-id` and `language`. No need to set up the Integrations for Line.
 2. Enable the [Dialogflow API](https://console.cloud.google.com/flows/enableapi?apiid=dialogflow.googleapis.com) in Google Cloud console for your project.
 3. Initialize [Firebase](https://console.firebase.google.com/) project
 ```
@@ -26,12 +26,15 @@ firebase functions:config:set line.channel_access_token="your-channel-access-tok
 ```
 firebase deploy --only functions
 ```
-You should get the URL of your function as `https://us-central1-your-project-id.cloudfunctions.net/webhook` and the link will also show up at your Firebase Functions Dashboard.
+You should get the URL of your function as `https://us-central1-your-project-id.cloudfunctions.net/webhook` and the link will also show up at your [Firebase Functions Dashboard](https://console.firebase.google.com/).
 
-7. Go to the [Line Channel Setting](https://developers.line.me/console/) of your bot. 
+7. Go to your [Firebase console](https://console.firebase.google.com/). Select the Blaze pricing plan. Firebase function would not allow external API call using free plan 😱.
+
+8. Go to the [Line Channel Setting](https://developers.line.me/console/) of your bot. 
 	- Enable webhook and add the Webhook URL to point to `https://us-central1-your-project-id.cloudfunctions.net/webhook`. 
 	- Disable Auto-reply messages and Greeting messages
-8. Go to Dialogflow console. For `Default Welcome Intent`, add `LINE_FOLLOW` event to greet your audience from Dialogflow!   
+	
+9. Go to Dialogflow console. For `Default Welcome Intent`, add `LINE_FOLLOW` event to greet your audience from Dialogflow!   
 
 ## Line webhook event to Dialogflow event
 - __Message event__ is simply sent to Dialogflow as text. 
