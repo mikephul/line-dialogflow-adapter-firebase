@@ -1,5 +1,5 @@
 import dialogflow from 'dialogflow';
-import { get } from 'lodash';
+import { get, filter, includes } from 'lodash';
 import { Message } from '@line/bot-sdk';
 
 import { structProtoToJson, jsonToStructProto } from './structjson';
@@ -50,24 +50,22 @@ export class DialogflowClient {
 
   private dialogflowMessagesToLineMessages(dialogflowMessages) {
     const lineMessages: Message[] = [];
-    for (let i = 0; i < dialogflowMessages.length; i++) {
-      if(get(dialogflowMessages[i], ['platform']) === 'LINE'){
-        const messageType = get(dialogflowMessages[i], 'message');
-        let message: Message;
-        if (messageType === 'text') {
-          message = {
-            type: 'text',
-            text: get(dialogflowMessages[i], ['text', 'text', '0']),
-          };
-          lineMessages.push(message);
-        } else if (messageType === 'payload') {
-          let payload = get(dialogflowMessages[i], ['payload']);
-          payload = structProtoToJson(payload);
-          message = get(payload, 'line');
-          lineMessages.push(message);
-        }
+    filter(dialogflowMessages, message => includes(['line', 'LINE', 'PLATFORM_UNSPECIFIED'], get(message, 'platform'))).forEach((dialogflowMessage) => {
+      const messageType = get(dialogflowMessage, 'message');
+      let message: Message;
+      if (messageType === 'text') {
+        message = {
+          type: 'text',
+          text: get(dialogflowMessages, ['text', 'text', '0']),
+        };
+        lineMessages.push(message);
+      } else if (messageType === 'payload') {
+        let payload = get(dialogflowMessages, ['payload']);
+        payload = structProtoToJson(payload);
+        message = get(payload, 'line');
+        lineMessages.push(message);
       }
-    }
+    });
     return lineMessages;
   }
 
@@ -76,5 +74,4 @@ export class DialogflowClient {
     const result = get(res, ['0', 'queryResult']);
     return get(result, 'fulfillmentMessages');
   }
-
 }
