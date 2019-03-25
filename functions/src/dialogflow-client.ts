@@ -51,19 +51,21 @@ export class DialogflowClient {
   private dialogflowMessagesToLineMessages(dialogflowMessages) {
     const lineMessages: Message[] = [];
     for (let i = 0; i < dialogflowMessages.length; i++) {
-      const messageType = get(dialogflowMessages[i], 'message');
-      let message: Message;
-      if (messageType === 'text') {
-        message = {
-          type: 'text',
-          text: get(dialogflowMessages[i], ['text', 'text', '0']),
-        };
-        lineMessages.push(message);
-      } else if (messageType === 'payload') {
-        let payload = get(dialogflowMessages[i], ['payload']);
-        payload = structProtoToJson(payload);
-        message = get(payload, 'line');
-        lineMessages.push(message);
+      if(get(dialogflowMessages[i], ['platform']) === 'LINE'){
+        const messageType = get(dialogflowMessages[i], 'message');
+        let message: Message;
+        if (messageType === 'text') {
+          message = {
+            type: 'text',
+            text: get(dialogflowMessages[i], ['text', 'text', '0']),
+          };
+          lineMessages.push(message);
+        } else if (messageType === 'payload') {
+          let payload = get(dialogflowMessages[i], ['payload']);
+          payload = structProtoToJson(payload);
+          message = get(payload, 'line');
+          lineMessages.push(message);
+        }
       }
     }
     return lineMessages;
