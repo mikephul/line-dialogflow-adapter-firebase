@@ -22,9 +22,8 @@ export class EventHandler {
   private readonly messageHandler: MessageHandler;
 
   constructor(
-    private readonly lineClient: Client,
     private readonly dialogflowClient: DialogflowClient) {
-    this.messageHandler = new MessageHandler(lineClient, dialogflowClient);
+    this.messageHandler = new MessageHandler(dialogflowClient);
   }
 
   async handleEvent(event: EventBase) {
@@ -81,7 +80,7 @@ export class EventHandler {
     const replyToken = get(event, 'replyToken');
     const userId = get(event, ['source', 'userId']);
     const lineMessages = await this.dialogflowClient.sendEvent(userId, LINE_FOLLOW);
-    return this.lineClient.replyMessage(replyToken, lineMessages);
+    return lineMessages;
   }
 
   private async handleUnfollow(event: UnfollowEvent) {
@@ -95,7 +94,7 @@ export class EventHandler {
     const replyToken = get(event, 'replyToken');
     const userId = get(event, ['source', 'userId']);
     const lineMessages = await this.dialogflowClient.sendEvent(userId, LINE_JOIN);
-    return this.lineClient.replyMessage(replyToken, lineMessages);
+    return lineMessages;
   }
 
   private async handleLeave(event: LeaveEvent) {
@@ -109,7 +108,7 @@ export class EventHandler {
     const replyToken = get(event, 'replyToken');
     const userId = get(event, ['source', 'userId']);
     const lineMessages = await this.dialogflowClient.sendEvent(userId, LINE_BEACON);
-    return this.lineClient.replyMessage(replyToken, lineMessages);
+    return lineMessages;
   }
 
   private parsePostbackData(data: string) {
@@ -131,7 +130,7 @@ export class EventHandler {
     const name = get(params, POSTBACK_EVENT_NAME_FIELD);
     delete params[POSTBACK_EVENT_NAME_FIELD];
     const lineMessages = await this.dialogflowClient.sendEvent(userId, name, params);
-    return this.lineClient.replyMessage(replyToken, lineMessages);
+    return lineMessages;
   }
 
 }

@@ -17,7 +17,7 @@ export class DialogflowClient {
     this.languageCode = config.languageCode;
   }
 
-  public async sendText(sessionId: string, text: string) {
+  public async getMessage(sessionId: string, text: string) {
     const sessionPath = this.sessionClient.sessionPath(this.projectId, sessionId);
     const req = {
       session: sessionPath,
@@ -29,7 +29,7 @@ export class DialogflowClient {
       },
     };
     const messages = await this.getDialogflowMessages(req);
-    return this.dialogflowMessagesToLineMessages(messages);
+    return messages
   }
 
   async sendEvent(sessionId: string, name: string, parameters = {}) {
@@ -45,30 +45,7 @@ export class DialogflowClient {
       },
     };
     const messages = await this.getDialogflowMessages(req);
-    return this.dialogflowMessagesToLineMessages(messages);
-  }
-
-  private dialogflowMessagesToLineMessages(dialogflowMessages) {
-    const lineMessages: Message[] = [];
-    for (let i = 0; i < dialogflowMessages.length; i++) {
-      if(get(dialogflowMessages[i], ['platform']) === 'LINE'){
-        const messageType = get(dialogflowMessages[i], 'message');
-        let message: Message;
-        if (messageType === 'text') {
-          message = {
-            type: 'text',
-            text: get(dialogflowMessages[i], ['text', 'text', '0']),
-          };
-          lineMessages.push(message);
-        } else if (messageType === 'payload') {
-          let payload = get(dialogflowMessages[i], ['payload']);
-          payload = structProtoToJson(payload);
-          message = get(payload, 'line');
-          lineMessages.push(message);
-        }
-      }
-    }
-    return lineMessages;
+    return messages
   }
 
   private async getDialogflowMessages(req) {
