@@ -56,7 +56,7 @@ export class EventHandler {
   }
 
   private async handleMessage(event: MessageEvent) {
-    const message: EventMessage = get(event, 'message');
+    const message: EventMessage = get(event, 'message') as EventMessage;
     const messageType = get(message, 'type');
     switch (messageType) {
       case 'text':
@@ -124,8 +124,8 @@ export class EventHandler {
   private async handlePostback(event: PostbackEvent) {
     const replyToken = get(event, 'replyToken');
     const userId = get(event, ['source', 'userId']);
-    const postback: Postback = get(event, 'postback');
-    const data = get(postback, 'data');
+    const postback: Postback = get(event, 'postback') as Postback;
+    const data = get(postback, 'data') as string;
     const params = this.parsePostbackData(data);
     const name = get(params, POSTBACK_EVENT_NAME_FIELD);
     delete params[POSTBACK_EVENT_NAME_FIELD];
