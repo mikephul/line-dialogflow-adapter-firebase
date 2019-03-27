@@ -1,16 +1,10 @@
 import * as functions from 'firebase-functions';
 import { ClientConfig } from '@line/bot-sdk';
 
-import { DialogflowConfig, BcrmConfig } from './types';
+import { DialogflowConfig } from './types';
 
 export const lineClientConfig: ClientConfig = {
   channelAccessToken: functions.config().line.channel_access_token,
-};
-
-export const bcrmConfig: BcrmConfig = {
-  user: functions.config().bcrm.user,
-  pass: functions.config().bcrm.pass,
-  endPoint: functions.config().bcrm.endPoint
 };
 
 export const dialogflowClientConfig: DialogflowConfig = {
