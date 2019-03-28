@@ -11,6 +11,8 @@ export class LineClient implements Imessage {
 
   public replyMessage = (event: MessageEvent, message) => {
     const replyToken = get(event, 'replyToken') as string;
-    this.lineClient.replyMessage(replyToken, message);
+    this.lineClient.replyMessage(replyToken, message).catch((err) => {
+      throw new Error("reply message error");
+    });
   }
 }
