@@ -3,7 +3,7 @@ import { Message, TextMessage } from '@line/bot-sdk';
 import { structProtoToJson, jsonToStructProto } from './../structjson';
 
 export class LineMessageMapper {
-  dialogflowToLine(dialogflowMessages) {
+  dialogflowToLine = (dialogflowMessages) => {
     let lineMessages = dialogflowMessages
       .filter(messages => get(messages, ['platform']) === 'LINE')
       .map(message => this.filterMessageType(message));
@@ -11,7 +11,7 @@ export class LineMessageMapper {
     return lineMessages;
   }
 
-  filterMessageType(message) {
+  filterMessageType = (message) => {
     const messageType = get(message, 'message');
     let messegeText: Message;
     if (messageType === 'text') {

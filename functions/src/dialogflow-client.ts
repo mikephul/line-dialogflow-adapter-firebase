@@ -17,7 +17,7 @@ export class DialogflowClient {
     this.languageCode = config.languageCode;
   }
 
-  public async getMessage(sessionId: string, text: string) {
+  getMessage = async (sessionId: string, text: string) => {
     const sessionPath = this.sessionClient.sessionPath(this.projectId, sessionId);
     const req = {
       session: sessionPath,
@@ -32,7 +32,7 @@ export class DialogflowClient {
     return messages
   }
 
-  async sendEvent(sessionId: string, name: string, parameters = {}) {
+  getEvent = async (sessionId: string, name: string, parameters = {}) => {
     const sessionPath = this.sessionClient.sessionPath(this.projectId, sessionId);
     const req = {
       session: sessionPath,
@@ -48,10 +48,9 @@ export class DialogflowClient {
     return messages
   }
 
-  private async getDialogflowMessages(req) {
+  private getDialogflowMessages = async (req) => {
     const res = await this.sessionClient.detectIntent(req);
     const result = get(res, ['0', 'queryResult']);
     return get(result, 'fulfillmentMessages');
   }
-
 }

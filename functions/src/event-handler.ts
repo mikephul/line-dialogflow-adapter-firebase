@@ -26,7 +26,7 @@ export class EventHandler {
     this.messageHandler = new MessageHandler(dialogflowClient);
   }
 
-  async handleEvent(event: EventBase) {
+  handleEvent = (event: EventBase) => {
     const eventType = get(event, 'type');
     switch (eventType) {
       case 'message':
@@ -55,63 +55,59 @@ export class EventHandler {
     }
   }
 
-  private async handleMessage(event: MessageEvent) {
+  private handleMessage = (event: MessageEvent) => {
     const message: EventMessage = get(event, 'message') as EventMessage;
     const messageType = get(message, 'type');
     switch (messageType) {
       case 'text':
         return this.messageHandler.handleText(event);
       case 'image':
-        return this.messageHandler.handleImage(event);
       case 'video':
-        return this.messageHandler.handleVideo(event);
       case 'audio':
-        return this.messageHandler.handleAudio(event);
       case 'location':
-        return this.messageHandler.handleLocation(event);
       case 'sticker':
-        return this.messageHandler.handleSticker(event);
+        return this.messageHandler.handleNonText(event, messageType);
       default:
         throw new Error(`Unknown message: ${JSON.stringify(message)}`);
     }
   }
 
-  private async handleFollow(event: FollowEvent) {
+  private handleFollow = async (event: FollowEvent) => {
     const replyToken = get(event, 'replyToken');
     const userId = get(event, ['source', 'userId']);
-    const lineMessages = await this.dialogflowClient.sendEvent(userId, LINE_FOLLOW);
+    const lineMessages = await this.dialogflowClient.getEvent(userId, LINE_FOLLOW);
     return lineMessages;
   }
 
-  private async handleUnfollow(event: UnfollowEvent) {
+  private handleUnfollow = (event: UnfollowEvent) => {
     // Can't reply back with Dialogflow
     // tslint:disable-next-line:no-console
     console.log(`Unfollowed this bot: ${JSON.stringify(event)}`);
     return;
   }
 
-  private async handleJoin(event: JoinEvent) {
+  private handleJoin = async (event: JoinEvent) => {
     const replyToken = get(event, 'replyToken');
     const userId = get(event, ['source', 'userId']);
-    const lineMessages = await this.dialogflowClient.sendEvent(userId, LINE_JOIN);
+    const lineMessages = await this.dialogflowClient.getEvent(userId, LINE_JOIN);
     return lineMessages;
   }
 
-  private async handleLeave(event: LeaveEvent) {
+  private handleLeave = async (event: LeaveEvent) => {
     // Can't reply back with Dialogflow
     // tslint:disable-next-line:no-console
     console.log(`Left: ${JSON.stringify(event)}`);
     return;
   }
 
-  private async handleBeacon(event: BeaconEvent) {
+  private handleBeacon = async (event: BeaconEvent) => {
     const replyToken = get(event, 'replyToken');
     const userId = get(event, ['source', 'userId']);
-    const lineMessages = await this.dialogflowClient.sendEvent(userId, LINE_BEACON);
+    const lineMessages = await this.dialogflowClient.getEvent(userId, LINE_BEACON);
     return lineMessages;
   }
 
-  private parsePostbackData(data: string) {
+  private parsePostbackData = (data: string) => {
     const params = {};
     const vars = data.split('&');
     for (let i = 0; i < vars.length; i++) {
@@ -121,7 +117,7 @@ export class EventHandler {
     return params;
   }
 
-  private async handlePostback(event: PostbackEvent) {
+  private handlePostback = async (event: PostbackEvent) => {
     const replyToken = get(event, 'replyToken');
     const userId = get(event, ['source', 'userId']);
     const postback: Postback = get(event, 'postback') as Postback;
@@ -129,7 +125,7 @@ export class EventHandler {
     const params = this.parsePostbackData(data);
     const name = get(params, POSTBACK_EVENT_NAME_FIELD);
     delete params[POSTBACK_EVENT_NAME_FIELD];
-    const lineMessages = await this.dialogflowClient.sendEvent(userId, name, params);
+    const lineMessages = await this.dialogflowClient.getEvent(userId, name, params);
     return lineMessages;
   }
 
