@@ -1,10 +1,10 @@
 import { get } from 'lodash';
-import { Message, TextMessage } from '@line/bot-sdk';
-import { structProtoToJson, jsonToStructProto } from './../structjson';
+import { Message } from '@line/bot-sdk';
+import { structProtoToJson } from './../structjson';
 
 export class LineMessageMapper {
   dialogflowToLine = (dialogflowMessages) => {
-    let lineMessages = dialogflowMessages
+    const lineMessages = dialogflowMessages
       .filter(messages => get(messages, ['platform']) === 'LINE')
       .map(message => this.filterMessageType(message));
 
@@ -19,14 +19,12 @@ export class LineMessageMapper {
         type: 'text',
         text: get(message, ['text', 'text', '0']),
       };
-      return messegeText;
     } else if (messageType === 'payload') {
       let payload = get(message, ['payload']);
       payload = structProtoToJson(payload);
       messegeText = get(payload, 'line');
-      return messegeText;
     }
+
     return messegeText;
   }
-
 }

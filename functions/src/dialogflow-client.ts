@@ -1,8 +1,6 @@
 import dialogflow from 'dialogflow';
 import { get } from 'lodash';
-import { Message } from '@line/bot-sdk';
-
-import { structProtoToJson, jsonToStructProto } from './structjson';
+import { jsonToStructProto } from './structjson';
 import { DialogflowConfig } from './types';
 
 export class DialogflowClient {
@@ -29,7 +27,7 @@ export class DialogflowClient {
       },
     };
     const messages = await this.getDialogflowMessages(req);
-    return messages
+    return messages;
   }
 
   getEvent = async (sessionId: string, name: string, parameters = {}) => {
@@ -45,7 +43,7 @@ export class DialogflowClient {
       },
     };
     const messages = await this.getDialogflowMessages(req);
-    return messages
+    return messages;
   }
 
   private getDialogflowMessages = async (req) => {

@@ -1,18 +1,11 @@
 import * as functions from 'firebase-functions';
 import { get } from 'lodash';
-
-import { Client, middleware, TextEventMessage, Message } from '@line/bot-sdk';
-
 import { DialogflowClient } from './dialogflow-client';
-import { lineClientConfig, dialogflowClientConfig } from './config';
+import { dialogflowClientConfig } from './config';
 import { EventHandler } from './event-handler';
 import { LineMessageMapper } from './mapper/line-message-mapper';
 import { LineClient } from './client/line-client';
 import { Imessage } from './interface/Imessage';
-
-//express
-const express = require("express");
-const app = express();
 
 const dialogflowClient = new DialogflowClient(dialogflowClientConfig);
 const webhookHandler = new EventHandler(dialogflowClient);
@@ -23,5 +16,5 @@ export const webhook = functions.https.onRequest(async (req, res) => {
   const message = await webhookHandler.handleEvent(event);
   const lineMessages = messageMapper.dialogflowToLine(message);
   const client: Imessage = new LineClient();
-  client.replyMessage(event, lineMessages)
+  client.replyMessage(event, lineMessages);
 });

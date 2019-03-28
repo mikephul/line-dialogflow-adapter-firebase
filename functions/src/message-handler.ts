@@ -1,10 +1,6 @@
 import { get } from 'lodash';
-import {
-  Client,
-  MessageEvent,
-} from '@line/bot-sdk';
-
-import { LINE_VERIFY_TOKEN, lineClientConfig } from './config';
+import { MessageEvent } from '@line/bot-sdk';
+import { LINE_VERIFY_TOKEN } from './config';
 import { DialogflowClient } from './dialogflow-client';
 import { STICKER } from './config';
 

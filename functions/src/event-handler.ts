@@ -1,6 +1,5 @@
 import { get } from 'lodash';
 import {
-  Client,
   EventBase,
   MessageEvent,
   FollowEvent,
@@ -73,7 +72,6 @@ export class EventHandler {
   }
 
   private handleFollow = async (event: FollowEvent) => {
-    const replyToken = get(event, 'replyToken');
     const userId = get(event, ['source', 'userId']);
     const lineMessages = await this.dialogflowClient.getEvent(userId, LINE_FOLLOW);
     return lineMessages;
@@ -87,7 +85,6 @@ export class EventHandler {
   }
 
   private handleJoin = async (event: JoinEvent) => {
-    const replyToken = get(event, 'replyToken');
     const userId = get(event, ['source', 'userId']);
     const lineMessages = await this.dialogflowClient.getEvent(userId, LINE_JOIN);
     return lineMessages;
@@ -101,7 +98,6 @@ export class EventHandler {
   }
 
   private handleBeacon = async (event: BeaconEvent) => {
-    const replyToken = get(event, 'replyToken');
     const userId = get(event, ['source', 'userId']);
     const lineMessages = await this.dialogflowClient.getEvent(userId, LINE_BEACON);
     return lineMessages;
@@ -118,7 +114,6 @@ export class EventHandler {
   }
 
   private handlePostback = async (event: PostbackEvent) => {
-    const replyToken = get(event, 'replyToken');
     const userId = get(event, ['source', 'userId']);
     const postback: Postback = get(event, 'postback') as Postback;
     const data = get(postback, 'data') as string;

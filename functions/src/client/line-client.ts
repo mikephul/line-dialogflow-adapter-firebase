@@ -1,7 +1,5 @@
-var request = require('request');
 import { Client, MessageEvent } from '@line/bot-sdk';
-import { lineClientConfig, dialogflowClientConfig } from './../config';
-import { Message } from '@line/bot-sdk';
+import { lineClientConfig } from './../config';
 import { Imessage } from './../interface/Imessage';
 import { get } from 'lodash';
 
