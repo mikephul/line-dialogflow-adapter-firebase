@@ -63,7 +63,7 @@ export class EventHandler {
       case 'text':
         return this.messageHandler.handleText(event);
       case 'image':
-        return this.messageHandler.handleImage(event);
+        return this.handleImage(event);
       case 'video':
         return this.messageHandler.handleVideo(event);
       case 'audio':
@@ -75,6 +75,13 @@ export class EventHandler {
       default:
         throw new Error(`Unknown message: ${JSON.stringify(message)}`);
     }
+  }
+
+  private async handleImage(event: MessageEvent) {
+    const replyToken = get(event, 'replyToken');
+    const userId = get(event, ['source', 'userId']);
+    const lineMessages = await this.dialogflowClient.sendMediaEvent(userId, event);
+    return this.lineClient.replyMessage(replyToken, lineMessages);
   }
 
   private async handleFollow(event: FollowEvent) {

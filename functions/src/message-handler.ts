@@ -24,7 +24,7 @@ export class MessageHandler {
     const userId = get(event, ['source', 'userId']);
     const message = get(event, 'message');
     const messageText = get(message, 'text');
-    const lineMessages = await this.dialogflowClient.sendText(userId, messageText);
+    const lineMessages = await this.dialogflowClient.sendText(userId, messageText, event);
     this.lineClient.replyMessage(replyToken, lineMessages);
     return;
   }
