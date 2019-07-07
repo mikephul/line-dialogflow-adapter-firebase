@@ -2,6 +2,7 @@ import { get } from 'lodash';
 import {
   Client,
   MessageEvent,
+  TextMessage,
 } from '@line/bot-sdk';
 
 import { LINE_VERIFY_TOKEN } from './config';
@@ -24,8 +25,11 @@ export class MessageHandler {
     const userId = get(event, ['source', 'userId']);
     const message = get(event, 'message');
     const messageText = get(message, 'text');
-    const lineMessages = await this.dialogflowClient.sendText(userId, messageText);
-    this.lineClient.replyMessage(replyToken, lineMessages);
+    const lineMessages = await this.dialogflowClient.sendText(userId, messageText, event);
+    const lineTextMessage = lineMessages[0] as TextMessage;
+    if (lineTextMessage.text !== '') {
+      this.lineClient.replyMessage(replyToken, lineMessages);
+    }
     return;
   }
 

@@ -11,6 +11,7 @@ import {
   PostbackEvent,
   BeaconEvent,
   EventMessage,
+  TextMessage,
 } from '@line/bot-sdk';
 
 import { LINE_FOLLOW, LINE_JOIN, LINE_BEACON, POSTBACK_EVENT_NAME_FIELD } from './config';
@@ -63,7 +64,7 @@ export class EventHandler {
       case 'text':
         return this.messageHandler.handleText(event);
       case 'image':
-        return this.messageHandler.handleImage(event);
+        return this.handleImage(event);
       case 'video':
         return this.messageHandler.handleVideo(event);
       case 'audio':
@@ -77,11 +78,24 @@ export class EventHandler {
     }
   }
 
+  private async handleImage(event: MessageEvent) {
+    const replyToken = get(event, 'replyToken');
+    const userId = get(event, ['source', 'userId']);
+    const lineMessages = await this.dialogflowClient.sendMediaEvent(userId, event);
+    const lineTextMessage = lineMessages[0] as TextMessage;
+    if (lineTextMessage.text !== '') {
+      this.lineClient.replyMessage(replyToken, lineMessages);
+    }
+  }
+
   private async handleFollow(event: FollowEvent) {
     const replyToken = get(event, 'replyToken');
     const userId = get(event, ['source', 'userId']);
     const lineMessages = await this.dialogflowClient.sendEvent(userId, LINE_FOLLOW);
-    return this.lineClient.replyMessage(replyToken, lineMessages);
+    const lineTextMessage = lineMessages[0] as TextMessage;
+    if (lineTextMessage.text !== '') {
+      this.lineClient.replyMessage(replyToken, lineMessages);
+    }
   }
 
   private async handleUnfollow(event: UnfollowEvent) {
@@ -95,7 +109,10 @@ export class EventHandler {
     const replyToken = get(event, 'replyToken');
     const userId = get(event, ['source', 'userId']);
     const lineMessages = await this.dialogflowClient.sendEvent(userId, LINE_JOIN);
-    return this.lineClient.replyMessage(replyToken, lineMessages);
+    const lineTextMessage = lineMessages[0] as TextMessage;
+    if (lineTextMessage.text !== '') {
+      this.lineClient.replyMessage(replyToken, lineMessages);
+    }
   }
 
   private async handleLeave(event: LeaveEvent) {
@@ -109,7 +126,10 @@ export class EventHandler {
     const replyToken = get(event, 'replyToken');
     const userId = get(event, ['source', 'userId']);
     const lineMessages = await this.dialogflowClient.sendEvent(userId, LINE_BEACON);
-    return this.lineClient.replyMessage(replyToken, lineMessages);
+    const lineTextMessage = lineMessages[0] as TextMessage;
+    if (lineTextMessage.text !== '') {
+      this.lineClient.replyMessage(replyToken, lineMessages);
+    }
   }
 
   private parsePostbackData(data: string) {
@@ -131,7 +151,10 @@ export class EventHandler {
     const name = get(params, POSTBACK_EVENT_NAME_FIELD);
     delete params[POSTBACK_EVENT_NAME_FIELD];
     const lineMessages = await this.dialogflowClient.sendEvent(userId, name, params);
-    return this.lineClient.replyMessage(replyToken, lineMessages);
+    const lineTextMessage = lineMessages[0] as TextMessage;
+    if (lineTextMessage.text !== '') {
+      this.lineClient.replyMessage(replyToken, lineMessages);
+    }
   }
 
 }
