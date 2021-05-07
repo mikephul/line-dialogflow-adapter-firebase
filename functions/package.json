@@ -15,7 +15,7 @@
     "firebase-functions": "^0.8.1",
     "@line/bot-sdk": "^6.1.0",
     "dialogflow": "^0.5.0",
-    "lodash": "^4.17.10"
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
     "ts-node": "^7.0.0",
